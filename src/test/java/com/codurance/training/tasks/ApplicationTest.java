@@ -119,6 +119,24 @@ public final class ApplicationTest {
     }
 
     @Test(timeout = 1000) public void
+    add_deadline_to_tasks_with_custom_ids() throws IOException {
+        execute("show");
+
+        execute("add project secrets");
+        execute("add task secrets e: Eat more donuts.");
+
+        execute("deadline e 15/01/2019");
+
+        execute("today");
+        readLines(
+            "secrets",
+                "    [ ] e - 15/01/2019: Eat more donuts.",
+                ""
+        );
+        execute("quit");
+    }
+
+    @Test(timeout = 1000) public void
     delete_tasks_with_custom_ids() throws IOException {
         execute("show");
 

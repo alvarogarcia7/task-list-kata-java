@@ -67,6 +67,9 @@ public final class TaskList implements Runnable {
             case "deadline":
                 addDeadline(commandRest[1]);
                 break;
+            case "delete":
+                delete(commandRest[1]);
+                break;
             case "today":
                 showToday();
                 break;
@@ -76,6 +79,22 @@ public final class TaskList implements Runnable {
             default:
                 error(command);
                 break;
+        }
+    }
+
+    private void delete(String id) {
+        for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
+            Task selectedTask = null;
+            for (Task task : project.getValue()) {
+
+                if (task.getId().equals(id)) {
+                    selectedTask = task;
+                    break;
+                }
+            }
+            if (null != selectedTask) {
+                project.getValue().remove(selectedTask);
+            }
         }
     }
 

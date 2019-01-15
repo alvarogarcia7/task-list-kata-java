@@ -99,6 +99,22 @@ public final class ApplicationTest {
         execute("quit");
     }
 
+    @Test(timeout = 1000) public void
+    add_a_deadline() throws IOException {
+        execute("add project secrets");
+        execute("add task secrets Eat more donuts.");
+
+        execute("deadline 1 15/01/2019");
+
+        execute("show");
+        readLines(
+                "secrets",
+                "    [ ] 1 - 15/01/2019: Eat more donuts.",
+                ""
+        );
+        execute("quit");
+    }
+
     private void execute(String command) throws IOException {
         read(PROMPT);
         write(command);

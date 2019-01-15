@@ -83,7 +83,7 @@ public final class TaskList implements Runnable {
         for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
             out.println(project.getKey());
             for (Task task : project.getValue()) {
-                out.printf("    [%c] %d%s: %s%n",
+                out.printf("    [%c] %s%s: %s%n",
                         (task.isDone() ? 'x' : ' '),
                         task.getId(),
                         (task.getDeadline() == null ? "" : " - " + task.getDeadline().getValue()),
@@ -97,8 +97,8 @@ public final class TaskList implements Runnable {
         for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
             out.println(project.getKey());
             for (Task task : project.getValue()) {
-                if(task.hasSameDeadlineAs(today())) {
-                    out.printf("    [%c] %d%s: %s%n",
+                if (task.hasSameDeadlineAs(today())) {
+                    out.printf("    [%c] %s%s: %s%n",
                             (task.isDone() ? 'x' : ' '),
                             task.getId(),
                             (task.getDeadline() == null ? "" : " - " + task.getDeadline().getValue()),
@@ -118,10 +118,9 @@ public final class TaskList implements Runnable {
         String taskIdValue = parts[0];
         String deadlineValue = parts[1];
 
-        int id = Integer.parseInt(taskIdValue);
         for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
             for (Task task : project.getValue()) {
-                if (task.getId() == id) {
+                if (task.getId().equals(taskIdValue)) {
                     task.setDeadline(new Deadline(deadlineValue));
                     return;
                 }
@@ -131,13 +130,26 @@ public final class TaskList implements Runnable {
     }
 
     private void add(String commandLine) {
+        String id = null;
         String[] subcommandRest = commandLine.split(" ", 2);
         String subcommand = subcommandRest[0];
         if (subcommand.equals("project")) {
             addProject(subcommandRest[1]);
         } else if (subcommand.equals("task")) {
-            String[] projectTask = subcommandRest[1].split(" ", 2);
-            addTask(projectTask[0], projectTask[1]);
+            String s = subcommandRest[1];
+            String[] x = s.split(" ", 3);
+            String project = x[0];
+            String possibleNewId = x[1];
+            String taskName = null;
+            if (possibleNewId.endsWith(":")) {
+                id = possibleNewId.replace(":", "");
+                taskName = x[2];
+            } else {
+                id = "" + nextId();
+                String[] projectTask = subcommandRest[1].split(" ", 2);
+                taskName = projectTask[1];
+            }
+            addTask(project, taskName, id);
         }
     }
 
@@ -145,14 +157,14 @@ public final class TaskList implements Runnable {
         tasks.put(name, new ArrayList<Task>());
     }
 
-    private void addTask(String project, String description) {
+    private void addTask(String project, String description, String id) {
         List<Task> projectTasks = tasks.get(project);
         if (projectTasks == null) {
             out.printf("Could not find a project with the name \"%s\".", project);
             out.println();
             return;
         }
-        projectTasks.add(new Task(nextId(), description, false));
+        projectTasks.add(new Task(id, description, false));
     }
 
     private void check(String idString) {
@@ -163,11 +175,10 @@ public final class TaskList implements Runnable {
         setDone(idString, false);
     }
 
-    private void setDone(String idString, boolean done) {
-        int id = Integer.parseInt(idString);
+    private void setDone(String id, boolean done) {
         for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
             for (Task task : project.getValue()) {
-                if (task.getId() == id) {
+                if (task.getId().equals(id)) {
                     task.setDone(done);
                     return;
                 }

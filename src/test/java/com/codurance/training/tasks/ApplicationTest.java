@@ -139,7 +139,7 @@ public final class ApplicationTest {
         execute("add task secrets more-donuts: Eat more donuts.");
         execute("add task secrets more-donuts-past: Eat more donuts another day.");
 
-        execute("today");
+        execute("show");
         readLines(
                 "secrets",
                 "    [ ] more-donuts: Eat more donuts.",

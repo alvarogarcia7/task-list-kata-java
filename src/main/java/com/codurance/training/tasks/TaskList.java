@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,6 +67,9 @@ public final class TaskList implements Runnable {
             case "deadline":
                 addDeadline(commandRest[1]);
                 break;
+            case "today":
+                showToday();
+                break;
             case "help":
                 help();
                 break;
@@ -86,6 +91,26 @@ public final class TaskList implements Runnable {
             }
             out.println();
         }
+    }
+
+    private void showToday() {
+        for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
+            out.println(project.getKey());
+            for (Task task : project.getValue()) {
+                if(task.hasSameDeadlineAs(today())) {
+                    out.printf("    [%c] %d%s: %s%n",
+                            (task.isDone() ? 'x' : ' '),
+                            task.getId(),
+                            (task.getDeadline() == null ? "" : " - " + task.getDeadline().getValue()),
+                            task.getDescription());
+                }
+            }
+            out.println();
+        }
+    }
+
+    private Deadline today() {
+        return new Deadline(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
 
     private void addDeadline(String commandRest) {

@@ -35,4 +35,8 @@ public final class Task {
     public Deadline getDeadline() {
         return deadline;
     }
+
+    public boolean hasSameDeadlineAs(Deadline other) {
+        return deadline.equals(other);
+    }
 }

@@ -133,6 +133,22 @@ public final class ApplicationTest {
         execute("quit");
     }
 
+    @Test(timeout = 1000) public void
+    allow_other_id_values() throws IOException {
+        execute("add project secrets");
+        execute("add task secrets more-donuts: Eat more donuts.");
+        execute("add task secrets more-donuts-past: Eat more donuts another day.");
+
+        execute("today");
+        readLines(
+                "secrets",
+                "    [ ] more-donuts: Eat more donuts.",
+                "    [ ] more-donuts-past: Eat more donuts another day.",
+                ""
+        );
+        execute("quit");
+    }
+
     private void execute(String command) throws IOException {
         read(PROMPT);
         write(command);

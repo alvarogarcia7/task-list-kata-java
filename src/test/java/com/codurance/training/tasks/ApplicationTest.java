@@ -115,6 +115,24 @@ public final class ApplicationTest {
         execute("quit");
     }
 
+    @Test(timeout = 1000) public void
+    only_show_tasks_for_today() throws IOException {
+        execute("add project secrets");
+        execute("add task secrets Eat more donuts.");
+        execute("add task secrets Eat more donuts another day.");
+
+        execute("deadline 1 15/01/2019");
+        execute("deadline 2 01/01/2000");
+
+        execute("today");
+        readLines(
+                "secrets",
+                "    [ ] 1 - 15/01/2019: Eat more donuts.",
+                ""
+        );
+        execute("quit");
+    }
+
     private void execute(String command) throws IOException {
         read(PROMPT);
         write(command);

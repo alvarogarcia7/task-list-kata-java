@@ -100,6 +100,28 @@ public final class ApplicationTest {
     }
 
     @Test(timeout = 1000) public void
+    check_tasks_with_custom_ids() throws IOException {
+        execute("show");
+
+        execute("add project secrets");
+        execute("add task secrets e: Eat more donuts.");
+        execute("add task secrets e2: Destroy all humans.");
+
+        execute("check e");
+        execute("check e2");
+
+        execute("show");
+        readLines(
+                "secrets",
+                "    [x] e: Eat more donuts.",
+                "    [x] e2: Destroy all humans.",
+                ""
+        );
+
+        execute("quit");
+    }
+
+    @Test(timeout = 1000) public void
     delete_tasks() throws IOException {
         execute("show");
 
